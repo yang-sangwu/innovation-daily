@@ -11,4 +11,8 @@ import java.util.Map;
  */
 public interface StudentSignService extends IService<StudentSign> {
     R querySignByUserId(Map<String, Object> map);
+
+    R addSign(Map<String, Object> map);
+
+    R addOut(Map<String, Object> map);
 }
