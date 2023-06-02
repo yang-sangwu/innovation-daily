@@ -9,6 +9,7 @@ import com.daily.domain.StudentSign;
 import com.daily.mapper.StudentSignMapper;
 import com.daily.service.StudentSignService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, Stude
     }
 
     @Override
+    @Transactional
     public R addSign(Map<String, Object> map) {
         long userId = Long.parseLong((String) map.get("userId"));
         String learnContent = (String) map.get("learnContent");
@@ -45,6 +47,7 @@ public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, Stude
     }
 
     @Override
+    @Transactional
     public R addOut(Map<String, Object> map) {
         long id = Long.parseLong((String) map.get("id"));
         String realLearnContent = (String) map.get("realLearnContent");
