@@ -44,7 +44,10 @@ public class StudentSign implements Serializable {
     private String realLearnContent;
 
     //学习时长
-    private String learnTime;
+    private Long learnTime;
+
+    //签到为0，签了退为1
+    private Integer status;
 
     //创建时间
     @TableField(fill = FieldFill.INSERT)
@@ -71,7 +74,7 @@ public class StudentSign implements Serializable {
         this.learnContent = learnContent;
     }
 
-    public StudentSign(Long userId, LocalDateTime signTime, LocalDateTime outTime, String learnContent, String realLearnContent, String learnTime) {
+    public StudentSign(Long userId, LocalDateTime signTime, LocalDateTime outTime, String learnContent, String realLearnContent, Long learnTime) {
         this.userId = userId;
         this.signTime = signTime;
         this.outTime = outTime;

@@ -65,4 +65,19 @@ public class UserController {
         return R.success("success!");
     }
 
+    /**
+     * 分页查询小组成员
+     */
+    @GetMapping("/queryPage")
+    public R query(@RequestParam Map<String, Object> map) {
+        return userService.queryUserPage(map);
+    }
+
+    /**
+     * 根据用户姓名，班级，所学方向，所学时长进行查询
+     */
+    @GetMapping("/queryLike")
+    public R queryLike(@RequestParam Map<String, Object> map) {
+        return userService.queryUserLike(map);
+    }
 }
