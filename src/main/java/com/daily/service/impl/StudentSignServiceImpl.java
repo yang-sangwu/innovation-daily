@@ -18,6 +18,7 @@ import java.util.Map;
 
 /**
  * @author a1002
+ * @Transactional 保证方法内多个数据库操作要么同时成功、要么同时失败
  */
 @Service
 public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, StudentSign> implements StudentSignService {
