@@ -60,6 +60,7 @@ public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, Stude
         wrapper.set("real_learn_content", realLearnContent);
         wrapper.set("out_time", outTime);
         wrapper.set("learn_time", minutes);
+        wrapper.set("status", 1);
         return R.success(studentSignMapper.update(null, wrapper));
     }
 }
