@@ -23,6 +23,10 @@ public class StudentSignController {
      */
     @GetMapping("/querySignByUserId")
     public R querySignByUserId(@RequestParam Map<String, Object> map) {
+        String id = (String) map.get("id");
+        if (id.length() == 0) {
+            return R.error("请输入id！");
+        }
         return studentSignService.querySignByUserId(map);
     }
 

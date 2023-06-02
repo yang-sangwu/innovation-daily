@@ -61,6 +61,10 @@ public class UserController {
      */
     @PutMapping("/update")
     public R update(@RequestParam Map<String, Object> map) {
+        String id = (String) map.get("id");
+        if (id.length() == 0) {
+            return R.error("请输入id！");
+        }
         userService.updateUser(map);
         return R.success("success!");
     }
@@ -70,6 +74,14 @@ public class UserController {
      */
     @GetMapping("/queryPage")
     public R query(@RequestParam Map<String, Object> map) {
+        String page = (String) map.get("page");
+        String limit = (String) map.get("limit");
+        if (page.length() == 0 || limit.length() == 0) {
+            return R.error("请传入参数！");
+        }
+        if (Long.parseLong(page) < 0 || Long.parseLong(limit) < 0) {
+            return R.error("请传入正确的参数！");
+        }
         return userService.queryUserPage(map);
     }
 
