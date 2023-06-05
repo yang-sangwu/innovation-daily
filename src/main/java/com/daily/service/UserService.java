@@ -10,7 +10,7 @@ import java.util.Map;
  * @author a1002
  */
 public interface UserService extends IService<User> {
-    boolean save(User user);
+    R saveUser(User user);
 
     void updateUser(Map<String, Object> map);
 

@@ -11,6 +11,7 @@ import com.daily.domain.User;
 import com.daily.mapper.StudentSignMapper;
 import com.daily.mapper.UserMapper;
 import com.daily.service.UserService;
+import com.daily.utils.MyUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +33,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional
-    public boolean save(User user) {
+    public R saveUser(User user) {
+        String username = user.getUsername();
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", username);
+        User user1 = userMapper.selectOne(wrapper);
+        if (user1 != null) {
+            return R.error("已存在此昵称！");
+        }
+        String code = String.valueOf(MyUtils.getNumber(6));
+        user.setCode(code);
         userMapper.insert(user);
-        return true;
+        return R.success("添加成功！");
     }
 
     @Override

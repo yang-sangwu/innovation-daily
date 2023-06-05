@@ -48,7 +48,7 @@ public class UserController {
      */
     @PostMapping("/save")
     public R save(User user) {
-        return R.success(userService.save(user));
+        return userService.saveUser(user);
     }
 
     /**
