@@ -12,6 +12,42 @@ spring:
     username: innovation-daily
     password: c4NBBG8k5nbrjZrn
 
+
+  redis:
+    #Redis服务器地址  此处的host为通过ifconfig命令获取的linux的IP地址
+    host: 1.15.155.4
+    #Redis服务器连接端口
+    port: 6379
+    #Redis数据库索引(默认为0)
+    database: 0
+    #Redis连接超时时间(毫秒)
+    timeout: 1800000
+    #配置Redis连接池
+    lettuce:
+      pool:
+        #Redis连接池的最大连接数(负数表示无限制)
+        max-active: 20
+        #Redis最大阻塞等待时间(负数表示没有限制)
+        max-wait: -1
+        #Redis连接池中的最大空闲连接数
+        max-idle: 5
+        #Redis连接池中的最小空闲连接数
+        min-idle: 0
+    password: 123456
+
+  mail:
+    username: 2728771838@qq.com #申请服务的邮箱，也就是发送邮件的邮箱
+    password: kovpofprtymwdgca #刚才申请服务产生的授权码
+    host: smtp.qq.com  #默认
+    default-encoding: UTF-8  #默认
+    properties: #默认
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

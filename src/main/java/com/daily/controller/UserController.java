@@ -4,10 +4,17 @@ import com.daily.config.R;
 import com.daily.domain.User;
 import com.daily.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author a1002
@@ -29,6 +36,18 @@ import java.util.Map;
 public class UserController {
     @Resource
     private UserService userService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    //自动装配RedisTemplate
+    //自动装配JavaMailSender
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
+
 
     /**
      * 根据id查询小组成员
@@ -101,5 +120,78 @@ public class UserController {
     @GetMapping("/queryLike")
     public R queryLike(@RequestParam Map<String, Object> map) {
         return userService.queryUserLike(map);
+    }
+
+    //随机生成6位数字
+    public String getCode(String mail) {
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            stringBuilder.append(random.nextInt(10));
+        }
+        //将随机得到的验证码存入redis中设置过期时间为60s
+//        redisTemplate.opsForValue().set("RedisCode", stringBuilder.toString(), 60, TimeUnit.SECONDS);
+        String code = stringBuilder.toString();
+
+        log.info("==============验证码=" + code);
+
+        redisTemplate.opsForValue().set(mail, code, 60, TimeUnit.SECONDS);
+        return stringBuilder.toString();
+    }
+
+    //发送邮件
+    @GetMapping("/email")
+    public R sendEmail(String toMail) {
+        SimpleMailMessage massage = new SimpleMailMessage();
+        massage.setFrom(mailUsername);
+        massage.setTo(toMail);
+        massage.setSubject("黑客帝国为你服务，请收好你的验证码：");
+        massage.setText(getCode(toMail));//发送内容为验证码
+        mailSender.send(massage);
+        return R.success("发送成功!");
+    }
+
+    /**
+     * 用户登录
+     */
+    @PostMapping("/login")
+    public R login(@RequestParam Map<String, Object> map) {
+        String mail = (String) map.get("mail");
+        String code = (String) map.get("code");
+        String username = (String) map.get("username");
+        String password = (String) map.get("password");
+
+        //   log.info(code.toString());
+
+        //从Session中获取保存的验证码
+        // Object codeInSession = session.getAttribute(phone);
+
+        //从redis获取缓存的验证码
+        Object codeInSession = redisTemplate.opsForValue().get(mail);
+
+        //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
+        if (codeInSession != null && codeInSession.equals(code)) {
+            //如果能够比对成功，说明登录成功
+
+            //如果用户登录成功，删除redis中缓存的验证码
+            redisTemplate.delete(mail);
+
+            log.info("==================验证码校验成功！====================");
+            boolean flag = userService.queryPasswordByUsername(username, password);
+            if (flag) {
+                return R.success("登录成功！");
+            } else {
+                return R.error("密码错误！");
+            }
+        }
+        return R.error("验证码错误！");
+    }
+
+    /**
+     * 根据用户昵称修改密码（昵称唯一性）
+     */
+    @PostMapping("/updatePasswordByName")
+    public R updatePasswordByName(@RequestParam Map<String, Object> map) {
+        return userService.updatePasswordByName(map);
     }
 }

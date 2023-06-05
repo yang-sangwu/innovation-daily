@@ -112,4 +112,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return R.success(userMapper.selectPage(pageInfo, wrapper));
     }
+
+    @Override
+    public boolean queryPasswordByUsername(String username, String password) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", username);
+        User user1 = userMapper.selectOne(wrapper);
+        if (user1.getPassword().equals(password)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public R updatePasswordByName(Map<String, Object> map) {
+        String username = (String) map.get("username");
+        String password = (String) map.get("password");
+        QueryWrapper<User> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("username", username);
+        User user1 = userMapper.selectOne(wrapper1);
+        if (user1 == null) {
+            return R.error("不存在此用户！");
+        }
+        if (!StringUtils.isNotBlank(password)) {
+            return R.error("请输入密码！");
+        }
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        wrapper.eq("username", username);
+        wrapper.set("password", password);
+        userMapper.update(null, wrapper);
+        return R.success("修改成功！");
+    }
 }

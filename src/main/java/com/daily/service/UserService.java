@@ -20,4 +20,8 @@ public interface UserService extends IService<User> {
 
     R queryUserLike(Map<String, Object> map);
 
+    boolean queryPasswordByUsername(String username, String password);
+
+    R updatePasswordByName(Map<String, Object> map);
+
 }
