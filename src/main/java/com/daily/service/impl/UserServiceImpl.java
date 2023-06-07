@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.daily.config.R;
 import com.daily.domain.User;
+import com.daily.dto.UserLearnTimeDto;
 import com.daily.mapper.StudentSignMapper;
 import com.daily.mapper.UserMapper;
 import com.daily.service.UserService;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,11 +94,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public R queryUserLike(Map<String, Object> map) {
         int page = Integer.parseInt((String) map.get("page"));
-        System.out.println("===========" + page);
         int limit = Integer.parseInt((String) map.get("limit"));
-        System.out.println("-------------");
         String thing = (String) map.get("thing");
-        System.out.println("----------" + thing);
         String type = (String) map.get("type");
         Page<User> pageInfo = new Page<>(page, limit);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -109,11 +109,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             } else if (type.equals("learnDirection")) {
                 wrapper.like(StringUtils.isNotBlank(thing), "learn_direction", thing);
             } else if (type.equals("learnTime")) {
-//                QueryWrapper<StudentSign> wq = new QueryWrapper<>();
-//                Page<StudentSign> pageInfo1 = new Page<>(page, limit);
-//                long learnTime = Long.parseLong(thing);
-//                wq.eq("learn_time", learnTime);
-//                return R.success(studentSignMapper.selectPage(pageInfo1, wq));
+                if (MyUtils.isNumber(thing)) {
+                    return R.error("请输入数字类型！");
+                } else {
+                    long sum = Long.parseLong((String) map.get("thing"));
+                    List<User> list = userMapper.selectList(null);
+                    List<UserLearnTimeDto> list1 = new ArrayList<>();
+                    for (User user : list) {
+                        long id = user.getId();
+                        long sumTime = studentSignMapper.querySumLearnTime(id);
+                        if (sumTime == sum) {
+                            UserLearnTimeDto userLearnTimeDto = new UserLearnTimeDto(user, sumTime);
+                            list1.add(userLearnTimeDto);
+                        }
+                    }
+                    return R.success(list1);
+                }
             }
         }
 
