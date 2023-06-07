@@ -1,7 +1,6 @@
 package com.daily.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.daily.config.R;
@@ -56,11 +55,11 @@ public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, Stude
         StudentSign studentSign = studentSignMapper.selectById(id);
         LocalDateTime signTime = studentSign.getSignTime();
         long minutes = ChronoUnit.MINUTES.between(signTime, outTime);
-        UpdateWrapper<StudentSign> wrapper = new UpdateWrapper<>();
-        wrapper.set("real_learn_content", realLearnContent);
-        wrapper.set("out_time", outTime);
-        wrapper.set("learn_time", minutes);
-        wrapper.set("status", 1);
-        return R.success(studentSignMapper.update(null, wrapper));
+        studentSign.setOutTime(outTime);
+        studentSign.setRealLearnContent(realLearnContent);
+        studentSign.setStatus(8);
+        studentSign.setLearnTime(minutes);
+        int n = studentSignMapper.updateById(studentSign);
+        return R.success(n);
     }
 }

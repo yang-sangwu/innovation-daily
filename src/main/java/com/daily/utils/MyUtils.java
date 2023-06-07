@@ -16,4 +16,13 @@ public class MyUtils {
         return sb;
     }
 
+    //判断字符串是否为数字
+    public static boolean isNumber(String str) {
+        for (int i = str.length(); --i >= 0; ) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

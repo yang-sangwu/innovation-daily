@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.daily.config.R;
-import com.daily.domain.StudentSign;
 import com.daily.domain.User;
 import com.daily.mapper.StudentSignMapper;
 import com.daily.mapper.UserMapper;
@@ -92,24 +91,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public R queryUserLike(Map<String, Object> map) {
         int page = Integer.parseInt((String) map.get("page"));
+        System.out.println("===========" + page);
         int limit = Integer.parseInt((String) map.get("limit"));
+        System.out.println("-------------");
         String thing = (String) map.get("thing");
+        System.out.println("----------" + thing);
         String type = (String) map.get("type");
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
         Page<User> pageInfo = new Page<>(page, limit);
-        if (type.equals("username")) {
-            wrapper.like(StringUtils.isNotBlank(thing), "username", thing);
-        } else if (type.equals("stuClass")) {
-            wrapper.like(StringUtils.isNotBlank(thing), "stu_class", thing);
-        } else if (type.equals("learnDirection")) {
-            wrapper.like(StringUtils.isNotBlank(thing), "learn_direction", thing);
-        } else {
-            QueryWrapper<StudentSign> wq = new QueryWrapper<>();
-            Page<StudentSign> pageInfo1 = new Page<>(page, limit);
-            long learnTime = Long.parseLong(thing);
-            wq.eq("learn_time", learnTime);
-            return R.success(studentSignMapper.selectPage(pageInfo1, wq));
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(thing) && !StringUtils.isNotBlank(type)) {
+            wrapper.like("username", thing).or().like("stu_class", thing).or().like("learn_direction", thing);
+        } else if (StringUtils.isNotBlank(thing) && StringUtils.isNotBlank(type)) {
+            if (type.equals("username")) {
+                wrapper.like(StringUtils.isNotBlank(thing), "username", thing);
+            } else if (type.equals("stuClass")) {
+                wrapper.like(StringUtils.isNotBlank(thing), "stu_class", thing);
+            } else if (type.equals("learnDirection")) {
+                wrapper.like(StringUtils.isNotBlank(thing), "learn_direction", thing);
+            } else if (type.equals("learnTime")) {
+//                QueryWrapper<StudentSign> wq = new QueryWrapper<>();
+//                Page<StudentSign> pageInfo1 = new Page<>(page, limit);
+//                long learnTime = Long.parseLong(thing);
+//                wq.eq("learn_time", learnTime);
+//                return R.success(studentSignMapper.selectPage(pageInfo1, wq));
+            }
         }
+
+
         return R.success(userMapper.selectPage(pageInfo, wrapper));
     }
 

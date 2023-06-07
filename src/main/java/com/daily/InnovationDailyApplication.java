@@ -9,10 +9,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * @author a1002
  */
-@SpringBootApplication
+
 @EnableTransactionManagement
 @ServletComponentScan
 @Slf4j
+@SpringBootApplication
 public class InnovationDailyApplication {
 
     public static void main(String[] args) {
