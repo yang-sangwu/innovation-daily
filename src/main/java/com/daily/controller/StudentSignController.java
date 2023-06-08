@@ -55,4 +55,21 @@ public class StudentSignController {
     public R addOut(@RequestParam Map<String, Object> map) {
         return studentSignService.addOut(map);
     }
+
+    /**
+     * 分页查询签到签退信息
+     */
+    @GetMapping("/queryPage")
+    public R queryStudentSignPage(@RequestParam Map<String, Object> map) {
+        return studentSignService.queryStudentSignPage(map);
+    }
+
+    /**
+     * 2分页查询签到签退信息
+     */
+    @GetMapping("/queryUserStudentPage")
+    public R queryUserStudentPage(@RequestParam Map<String, Object> map) {
+        return studentSignService.queryUserStudentPage();
+    }
+
 }

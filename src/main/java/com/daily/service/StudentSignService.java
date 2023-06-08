@@ -15,4 +15,8 @@ public interface StudentSignService extends IService<StudentSign> {
     R addSign(Map<String, Object> map);
 
     R addOut(Map<String, Object> map);
+
+    R queryStudentSignPage(Map<String, Object> map);
+
+    R queryUserStudentPage();
 }

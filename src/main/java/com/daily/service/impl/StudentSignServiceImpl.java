@@ -62,4 +62,19 @@ public class StudentSignServiceImpl extends ServiceImpl<StudentSignMapper, Stude
         int n = studentSignMapper.updateById(studentSign);
         return R.success(n);
     }
+
+    @Override
+    public R queryStudentSignPage(Map<String, Object> map) {
+        int page = Integer.parseInt((String) map.get("page"));
+        int limit = Integer.parseInt((String) map.get("limit"));
+        Page<StudentSign> pageInfo = new Page<>(page, limit);
+        QueryWrapper<StudentSign> wrapper = new QueryWrapper<>();
+        return R.success(studentSignMapper.selectPage(pageInfo, wrapper));
+    }
+
+    @Override
+    public R queryUserStudentPage() {
+
+        return R.success(studentSignMapper.queryUserStudentPage());
+    }
 }
