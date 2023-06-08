@@ -137,8 +137,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("username", username);
         User user1 = userMapper.selectOne(wrapper);
-        if (user1.getPassword().equals(password)) {
-            return true;
+        if (user1 != null) {
+            if ((user1 != null)) {
+                return true;
+            }
         }
         return false;
     }
@@ -161,5 +163,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.set("password", password);
         userMapper.update(null, wrapper);
         return R.success("修改成功！");
+    }
+
+    @Override
+    @Transactional
+    public R addUser(Map<String, Object> map) {
+        String username = (String) map.get("username");
+        String password = (String) map.get("password");
+        String stuClass = (String) map.get("stuClass");
+        String learnDirection = (String) map.get("learnDirection");
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", username);
+        User user1 = userMapper.selectOne(wrapper);
+        if (user1 != null) {
+            return R.error("已存在此昵称！");
+        }
+        String code = String.valueOf(MyUtils.getNumber(6));
+        User user = new User(code, username, password, stuClass, learnDirection);
+        userMapper.insert(user);
+        return R.success("添加成功！");
     }
 }

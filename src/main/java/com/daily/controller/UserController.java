@@ -156,8 +156,8 @@ public class UserController {
      */
     @PostMapping("/login")
     public R login(@RequestParam Map<String, Object> map) {
-        String mail = (String) map.get("mail");
-        String code = (String) map.get("code");
+//        String mail = (String) map.get("mail");
+//        String code = (String) map.get("code");
         String username = (String) map.get("username");
         String password = (String) map.get("password");
 
@@ -165,6 +165,43 @@ public class UserController {
 
         //从Session中获取保存的验证码
         // Object codeInSession = session.getAttribute(phone);
+
+        //从redis获取缓存的验证码
+//        Object codeInSession = redisTemplate.opsForValue().get(mail);
+
+        //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
+//        if (codeInSession != null && codeInSession.equals(code)) {
+//            //如果能够比对成功，说明登录成功
+//
+//            //如果用户登录成功，删除redis中缓存的验证码
+//            redisTemplate.delete(mail);
+//
+//            log.info("==================验证码校验成功！====================");
+        boolean flag = userService.queryPasswordByUsername(username, password);
+        if (flag) {
+            return R.success("登录成功！");
+        } else {
+            return R.error("密码错误！");
+        }
+//        }
+//        return R.error("验证码错误！");
+    }
+
+    /**
+     * 根据用户昵称修改密码（昵称唯一性）
+     */
+    @PostMapping("/updatePasswordByName")
+    public R updatePasswordByName(@RequestParam Map<String, Object> map) {
+        return userService.updatePasswordByName(map);
+    }
+
+    /**
+     * 注册
+     */
+    @PostMapping("/addUser")
+    public R addUser(@RequestParam Map<String, Object> map) {
+        String mail = (String) map.get("mail");
+        String code = (String) map.get("code");
 
         //从redis获取缓存的验证码
         Object codeInSession = redisTemplate.opsForValue().get(mail);
@@ -177,21 +214,8 @@ public class UserController {
             redisTemplate.delete(mail);
 
             log.info("==================验证码校验成功！====================");
-            boolean flag = userService.queryPasswordByUsername(username, password);
-            if (flag) {
-                return R.success("登录成功！");
-            } else {
-                return R.error("密码错误！");
-            }
+            return userService.addUser(map);
         }
-        return R.error("验证码错误！");
-    }
-
-    /**
-     * 根据用户昵称修改密码（昵称唯一性）
-     */
-    @PostMapping("/updatePasswordByName")
-    public R updatePasswordByName(@RequestParam Map<String, Object> map) {
-        return userService.updatePasswordByName(map);
+        return R.error("注册失败！");
     }
 }

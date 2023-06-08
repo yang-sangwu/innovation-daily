@@ -24,4 +24,6 @@ public interface UserService extends IService<User> {
 
     R updatePasswordByName(Map<String, Object> map);
 
+    R addUser(Map<String, Object> map);
+
 }
